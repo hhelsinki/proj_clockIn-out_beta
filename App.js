@@ -1,27 +1,33 @@
 
 import './App.css';
-import Form from './components/common/Form.js';
+
 import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+
 import { app } from './firebase-config';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from 'firebase/auth';
-import Home from './components/common/Home.js';
-import ResetPassword from './components/common/ResetPassword';
+
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Staff_dashboard from './components/common/Staff_dashboard_update';
-import Admin_dashboard from './components/common/Admin_dashboard_update';
+
+import Form from './components/common/Form.js';
+import Home from './components/common/Home.js';
+import ResetPassword from './components/common/ResetPassword';
+import Staff_dashboard from './components/crud/Staff_dashboard';
+import Admin_dashboard from './components/crud/Admin_dashboard';
+import Google_Login from './components/google-authen/Google_Login';
+import Facebook_Login from './components/facebook-authen/Facebook_Login';
 
 
 function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const authentication = getAuth();
-  const txt_forgetPassword = 'Forget Password? stable ';
-  const txt_suggestToRegister = 'No account? stable Register ';
+  const txt_forgetPassword = 'Forget Password? ';
+  const txt_suggestToRegister = 'No account? Register ';
   const txt_here = 'Here';
   const txt_reset = 'Reset';
-  const txt_suggestToLogin = 'Already have an Account? stable ';
+  const txt_suggestToLogin = 'Already have an Account? ';
   const txt_login = 'Login';
   let navigate = useNavigate();
 
@@ -68,6 +74,7 @@ function App() {
           }
         })
     }
+    //reset password
     if (id === 3) {
       sendPasswordResetEmail(authentication, email)
         .then(() => {
@@ -81,6 +88,14 @@ function App() {
 
           // ..
         });
+    }
+    //admin
+    if (id === 5) {
+      const test = (res) => {
+        toast.success('Login Successfully!', { autoClose: 1000 });
+
+      }
+      test();
     }
   };
 
@@ -104,22 +119,26 @@ function App() {
             case 'MscmztHSkrTo9xyW856ltvBjiZ13':
               console.log('get uid: ' + uid);
               navigate('/admin_dashboard');
+
               break;
             //admin 2
             case 'G65572jkApQfz3TuLCCDzHUK6U52':
               console.log('get uid: ' + uid);
               navigate('/admin_dashboard');
+
               break;
             //staff
             case 'dydPybXGnYMg92wYBwb6HaHdYvt2':
               console.log('get uid: ' + uid);
               navigate('/staff_dashboard');
+
               break;
 
             default:
-              const alp = 'abcd';
-              console.log('uid: ' + alp);
               navigate('/home');
+              
+
+
               break;
           }
 
@@ -183,17 +202,25 @@ function App() {
           <Route
             path='/login'
             element={
-              <Form
-                title='Login'
-                setEmail={setEmail}
-                setPassword={setPassword}
-                handleAction={() => handleAction(1)}
-                txt_forgetPassword={txt_forgetPassword}
-                txt_suggestToRegister={txt_suggestToRegister}
-                txt_reset={txt_reset}
-                txt_here={txt_here}
+              <>
+                <Form
+                  title='Login'
+                  setEmail={setEmail}
+                  setPassword={setPassword}
+                  handleAction={() => handleAction(1)}
+                  txt_forgetPassword={txt_forgetPassword}
+                  txt_suggestToRegister={txt_suggestToRegister}
+                  txt_reset={txt_reset}
+                  txt_here={txt_here} />
+                <div>
+                  <div className='rel'>
+                    <p>Or</p>
+                  </div>
 
-              />
+                </div>
+                <Google_Login />
+                <Facebook_Login />
+              </>
 
             } />
           <Route path='/register' element={
@@ -221,12 +248,14 @@ function App() {
           <Route
             path='/staff_dashboard'
             element={
-              <Staff_dashboard />}
+              <Staff_dashboard
+              />}
           />
           <Route
             path='/admin_dashboard'
             element={
-              <Admin_dashboard />}
+              <Admin_dashboard
+              />}
           />
 
         </Routes>
